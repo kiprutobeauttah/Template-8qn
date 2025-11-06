@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>BioTrack – Medical Dashboard (Dark)</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            'bio': '#ff4444',           // neon red
+            'bio-light': '#ff6666',
+            'bio-bg': '#0f172a',        // slate-900
+            'glass': 'rgba(15, 23, 42, 0.6)',
+            'glass-border': 'rgba(255, 255, 255, 0.1)',
+            'text-primary': '#e2e8f0',  // slate-200
+            'text-muted': '#94a3b8',    // slate-400
+          },
+          backdropBlur: {
+            xs: '2px',
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <style>
+    body {
+      background: #0f172a;
+      min-height: 100vh;
+    }
+    .glass-card {
+      background: var(--tw-gradient-stops);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border: 1px solid var(--glass-border);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.3);
+    }
+    .heart-container {
+      perspective: 1000px;
+    }
+    .heart {
+      animation: pulse 2s infinite;
+      transform-style: preserve-3d;
+      filter: drop-shadow(0 0 30px #ff4444);
+    }
+    @keyframes pulse {
+      0%, 100% { transform: scale(1) rotateY(0deg); }
+      50% { transform: scale(1.05) rotateY(8deg); }
+    }
+    .status-normal { @apply text-emerald-400; }
+    .status-high { @apply text-yellow-400; }
+    .status-low { @apply text-red-400; }
+    .sidebar {
+      transition: all 0.3s ease;
+    }
+    .sidebar.collapsed {
+      width: 80px;
+    }
+    .sidebar.collapsed .nav-text,
+    .sidebar.collapsed .logo-text {
+      display: none;
+    }
+    .theme-toggle {
+      @apply w-14 h-7 rounded-full bg-slate-700 p-1 cursor-pointer transition;
+    }
+    .theme-toggle.active {
+      @apply bg-bio;
+    }
+    .theme-toggle .indicator {
+      @apply w-5 h-5 rounded-full bg-white shadow-md transition;
+    }
+    .theme-toggle.active .indicator {
+      transform: translateX(100%);
+    }
+  </style>
+</head>
+<body class="text-text-primary">
+
+  <div class="min-h-screen flex">
+
+    <!-- Sidebar -->
+    <aside id="sidebar" class="sidebar w-64 bg-slate-900/80 glass-card flex flex-col border-r border-white/10">
+      <div class="p-6 border-b border-white/10">
+        <div class="flex items-center justify-between">
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-gradient-to-br from-bio to-red-600 rounded-full flex items-center justify-center text-white font-bold shadow-lg">
+              B
+            </div>
+            <h1 class="text-xl font-bold logo-text">BioTrack</h1>
+          </div>
+          <!-- Theme Toggle -->
+          <div class="theme-toggle" id="themeToggle">
+            <div class="indicator"></div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="flex-1 px-4 py-4 space-y-2">
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-muted hover:bg-white/10 hover:text-white transition">
+          <i class="fas fa-home"></i>
+          <span class="nav-text">Dashboard</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 text-white">
+          <i class="fas fa-heart"></i>
+          <span class="nav-text">Vitals</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-muted hover:bg-white/10 hover:text-white transition">
+          <i class="fas fa-chart-line"></i>
+          <span class="nav-text">Trends</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-muted hover:bg-white/10 hover:text-white transition">
+          <i class="fas fa-file-medical"></i>
+          <span class="nav-text">Reports</span>
+        </a>
+        <a href="#" class="flex items-center gap-3 px-4 py-3 rounded-xl text-text-muted hover:bg-white/10 hover:text-white transition">
+          <i class="fas fa-cog"></i>
+          <span class="nav-text">Settings</span>
+        </a>
+      </nav>
+
+      <div class="p-4 border-t border-white/10">
+        <div class="flex items-center gap-3">
+          <img src="https://i.pravatar.cc/40?u=sarah" alt="Dr" class="w-9 h-9 rounded-full ring-2 ring-white/20">
+          <div class="nav-text">
+            <p class="text-sm font-medium">Dr. Sarah Lin</p>
+            <p class="text-xs text-text-muted">Cardiologist</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="flex-1 p-8">
+      <!-- Header -->
+      <header class="glass-card rounded-2xl p-6 mb-8 flex justify-between items-center border border-white/10">
+        <div class="flex items-center gap-4 flex-1 max-w-xl">
+          <div class="relative flex-1">
+            <input type="text" placeholder="Search patient, report..." 
+                   class="w-full pl-12 pr-4 py-3 rounded-full bg-white/5 border border-white/20 text-text-primary placeholder-text-muted focus:outline-none focus:ring-2 focus:ring-bio focus:border-transparent transition">
+            <i class="fas fa-search absolute left-4 top-1/2 transform -translate-y-1/2 text-text-muted"></i>
+          </div>
+        </div>
+        <div class="flex items-center gap-4">
+          <button class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition"><i class="fas fa-bell"></i></button>
+          <button class="p-3 rounded-full bg-white/10 hover:bg-white/20 transition"><i class="fas fa-cog"></i></button>
+          <div class="flex items-center gap-3">
+            <img src="https://i.pravatar.cc/40?u=charles" alt="Charles" class="w-10 h-10 rounded-full ring-2 ring-bio/50">
+            <div>
+              <p class="font-medium">Charles Robbie</p>
+              <p class="text-xs text-text-muted">ID: 10234</p>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Dashboard Grid -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+
+        <!-- Left: 3D Heart + Vitals -->
+        <div class="lg:col-span-1 space-y-6">
+          <!-- 3D Heart -->
+          <div class="glass-card rounded-3xl p-8 relative overflow-hidden border border-white/10">
+            <div class="heart-container">
+              <img src="https://media1.giphy.com/media/v1.Y2lkPWVjZjA1ZTQ3d3dhbXl2Z29zbDQ1eHhwNmFsczlucnh5ZXIyd214M3RvNDdybDRoMSZlcD12MV9naWZzX3NlYXJjaCZjdD1n/RZxO4rRIUhy5a/giphy.webp" alt="Heart" class="heart w-full max-w-xs mx-auto">
+            </div>
+
+            <!-- Vitals Badges -->
+            <div class="absolute top-8 left-8 space-y-3">
+              <div class="bg-white/10 backdrop-blur rounded-full px-4 py-2 text-sm font-medium shadow-lg border border-white/20">
+                Oxygen Saturation <span class="ml-2 font-bold text-bio-light" id="o2">97%</span>
+              </div>
+            </div>
+
+            <div class="absolute bottom-8 left-8">
+              <div class="bg-white/10 backdrop-blur rounded-full px-4 py-2 text-sm font-medium shadow-lg border border-white/20">
+                Temperature <span class="ml-2 font-bold text-bio-light" id="temp">36.8°C</span>
+              </div>
+            </div>
+
+            <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+              <div class="bg-white/20 backdrop-blur-xl rounded-full w-32 h-32 flex flex-col items-center justify-center shadow-2xl border border-white/30">
+                <p class="text-3xl font-bold" id="bp">122/78</p>
+                <p class="text-xs text-text-muted mt-1">mmHg</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Patient Info -->
+          <div class="glass-card rounded-2xl p-6 border border-white/10">
+            <div class="flex justify-between items-center text-text-primary">
+              <div>
+                <p class="text-sm text-text-muted">Height</p>
+                <p class="text-2xl font-bold">186 cm</p>
+              </div>
+              <div class="text-right">
+                <p class="text-sm text-text-muted">Weight</p>
+                <p class="text-2xl font-bold">90 Kg</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Charts & Table -->
+        <div class="lg:col-span-2 space-y-6">
+          <!-- Title -->
+          <h1 class="text-4xl font-bold drop-shadow-lg">Medical Dashboard</h1>
+
+          <!-- Heart Rate Trends -->
+          <div class="glass-card rounded-3xl p-8 border border-white/10">
+            <h2 class="text-xl font-semibold mb-6">Heart Rate Trends</h2>
+            <canvas id="heartChart" height="200"></canvas>
+          </div>
+
+          <!-- Vitals Table -->
+          <div class="glass-card rounded-3xl p-8 overflow-hidden border border-white/10">
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead>
+                  <tr class="text-left text-text-muted border-b border-white/10">
+                    <th class="pb-3">Date / Time</th>
+                    <th class="pb-3">HR (bpm)</th>
+                    <th class="pb-3">BP (mmHg)</th>
+                    <th class="pb-3">SpO2 (%)</th>
+                    <th class="pb-3">RR (bpm)</th>
+                    <th class="pb-3">Status</th>
+                  </tr>
+                </thead>
+                <tbody class="text-text-primary">
+                  <tr class="border-b border-white/5">
+                    <td class="py-3">2025-03-15 08:30</td>
+                    <td class="py-3">78</td>
+                    <td class="py-3">120/80</td>
+                    <td class="py-3">98</td>
+                    <td class="py-3">16</td>
+                    <td class="py-3"><span class="status-normal">Normal</span></td>
+                  </tr>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3">2025-03-15 09:15</td>
+                    <td class="py-3">85</td>
+                    <td class="py-3">135/85</td>
+                    <td class="py-3">96</td>
+                    <td class="py-3">18</td>
+                    <td class="py-3"><span class="status-high">High</span></td>
+                  </tr>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3">2025-03-15 10:00</td>
+                    <td class="py-3">72</td>
+                    <td class="py-3">118/76</td>
+                    <td class="py-3">99</td>
+                    <td class="py-3">15</td>
+                    <td class="py-3"><span class="status-normal">Normal</span></td>
+                  </tr>
+                  <tr class="border-b border-white/5">
+                    <td class="py-3">2025-03-15 11:30</td>
+                    <td class="py-3">120</td>
+                    <td class="py-3">142/90</td>
+                    <td class="py-3">94</td>
+                    <td class="py-3">22</td>
+                    <td class="py-3"><span class="status-low">Low</span></td>
+                  </tr>
+                  <tr>
+                    <td class="py-3">2025-03-15 12:00</td>
+                    <td class="py-3">80</td>
+                    <td class="py-3">122/78</td>
+                    <td class="py-3">97</td>
+                    <td class="py-3">16</td>
+                    <td class="py-3"><span class="status-normal">Normal</span></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // === Theme Toggle ===
+    const themeToggle = document.getElementById('themeToggle');
+    const html = document.documentElement;
+
+    themeToggle.addEventListener('click', () => {
+      themeToggle.classList.toggle('active');
+      if (html.classList.contains('dark')) {
+        html.classList.remove('dark');
+        document.body.style.background = '#e0f7fa';
+      } else {
+        html.classList.add('dark');
+        document.body.style.background = '#0f172a';
+      }
+    });
+
+    // === Chart.js - Heart Rate Trends ===
+    const ctx = document.getElementById('heartChart').getContext('2d');
+    const heartChart = new Chart(ctx, {
+      type: 'line',
+      data: {
+        labels: ['00:00', '04:00', '08:00', '12:00', '16:00', '20:00', '23:59'],
+        datasets: [
+          {
+            label: 'Heart Rate',
+            data: [72, 75, 78, 85, 82, 88, 80],
+            borderColor: '#ff4444',
+            backgroundColor: 'rgba(255, 68, 68, 0.1)',
+            borderWidth: 3,
+            pointBackgroundColor: '#ff4444',
+            pointRadius: 5,
+            tension: 0.4,
+            fill: true
+          },
+          {
+            label: 'Oxygen',
+            data: [98, 97, 96, 97, 98, 97, 97],
+            borderColor: '#10b981',
+            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+            borderWidth: 3,
+            pointBackgroundColor: '#10b981',
+            pointRadius: 5,
+            tension: 0.4,
+            fill: true
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(15,23,42,0.9)',
+            cornerRadius: 12,
+            padding: 12,
+            titleColor: '#e2e8f0',
+            bodyColor: '#e2e8f0'
+          }
+        },
+        scales: {
+          x: { 
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#94a3b8' }
+          },
+          y: { 
+            grid: { color: 'rgba(255,255,255,0.05)' },
+            ticks: { color: '#94a3b8' }
+          }
+        }
+      }
+    });
+
+    // === Live Updates (Demo) ===
+    function updateVitals() {
+      const hr = Math.floor(Math.random() * 20) + 70;
+      const bp1 = Math.floor(Math.random() * 30) + 110;
+      const bp2 = Math.floor(Math.random() * 20) + 70;
+      const o2 = Math.floor(Math.random() * 5) + 95;
+      const temp = (36.6 + Math.random() * 0.5).toFixed(1);
+
+      document.getElementById('bp').textContent = `${bp1}/${bp2}`;
+      document.getElementById('o2').textContent = `${o2}%`;
+      document.getElementById('temp').textContent = `${temp}°C`;
+    }
+
+    setInterval(updateVitals, 4000);
+    updateVitals();
+
+    // === Sidebar Collapse ===
+    document.querySelector('.logo-text')?.addEventListener('dblclick', () => {
+      document.getElementById('sidebar').classList.toggle('collapsed');
+    });
+  </script>
+</body>
+</html>

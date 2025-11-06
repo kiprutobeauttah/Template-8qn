@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Tech & Design Stories</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8f8f8;
+      --text: #1a1a1a;
+      --gray: #666;
+      --light-gray: #999;
+      --border: #e0e0e0;
+      --accent: #000;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      line-height: 1.6;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.05);
+    }
+
+    /* Header */
+    header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .logo {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .hamburger {
+      width: 24px;
+      height: 18px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .hamburger span {
+      display: block;
+      height: 2px;
+      background: var(--text);
+      margin-bottom: 5px;
+      transition: 0.3s;
+    }
+
+    .hamburger span:last-child { margin-bottom: 0; }
+
+    .btn-contact {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.6rem 1.2rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    .btn-contact:hover {
+      opacity: 0.9;
+    }
+
+    /* Nav */
+    nav {
+      padding: 1rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      font-size: 0.95rem;
+      font-weight: 500;
+    }
+
+    .nav-links a {
+      color: var(--gray);
+      text-decoration: none;
+      position: relative;
+    }
+
+    .nav-links a.active,
+    .nav-links a:hover {
+      color: var(--text);
+    }
+
+    .nav-links a.active::after {
+      content: '';
+      position: absolute;
+      bottom: -8px;
+      left: 0;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    /* Main Content */
+    main {
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    /* Article Card */
+    .article {
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .article:last-child {
+      border-bottom: none;
+      margin-bottom: 0;
+    }
+
+    .article-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 8px;
+      margin-bottom: 1rem;
+    }
+
+    .article h3 {
+      font-family: 'Playfair Display', serif;
+      font-size: 1.3rem;
+      margin-bottom: 0.5rem;
+      line-height: 1.3;
+    }
+
+    .article p {
+      font-size: 0.9rem;
+      color: var(--gray);
+      margin-bottom: 0.8rem;
+    }
+
+    .tags {
+      display: flex;
+      gap: 0.5rem;
+      font-size: 0.75rem;
+      color: var(--light-gray);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .tags span {
+      background: #f0f0f0;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    /* Large Featured */
+    .featured {
+      grid-column: span 2;
+    }
+
+    .featured .article-img {
+      height: 240px;
+    }
+
+    .featured h3 {
+      font-size: 1.8rem;
+      margin: 1rem 0 0.8rem;
+    }
+
+    /* Small Cards */
+    .small-card {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .small-card img {
+      width: 100px;
+      height: 80px;
+      object-fit: cover;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+
+    .small-card h4 {
+      font-size: 1rem;
+      margin-bottom: 0.4rem;
+      line-height: 1.3;
+    }
+
+    .small-card p {
+      font-size: 0.8rem;
+      color: var(--gray);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      body { padding: 1rem; }
+      main { grid-template-columns: 1fr; gap: 1.5rem; padding: 1.5rem; }
+      .featured { grid-column: span 1; }
+      .featured .article-img { height: 200px; }
+      .featured h3 { font-size: 1.5rem; }
+      .nav-links { gap: 1rem; font-size: 0.9rem; }
+    }
+
+    @media (max-width: 480px) {
+      header { padding: 1rem; }
+      .logo { font-size: 1.4rem; }
+      .btn-contact { padding: 0.5rem 1rem; font-size: 0.8rem; }
+      .small-card { flex-direction: column; }
+      .small-card img { width: 100%; height: 120px; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="hamburger">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+      <div class="logo">This is where we tell stories</div>
+      <button class="btn-contact">Contact Us</button>
+    </header>
+
+    <!-- Navigation -->
+    <nav>
+      <div class="nav-links">
+        <a href="#" class="active">Latest</a>
+        <a href="#">Design</a>
+        <a href="#">Development</a>
+        <a href="#">Management</a>
+        <a href="#">Marketing</a>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main>
+
+      <!-- Left Column -->
+      <div>
+
+        <!-- Article 1 -->
+        <div class="article">
+          <img src="https://via.placeholder.com/500x160/333333/ffffff?text=E-Learning+App" alt="E-Learning App" class="article-img">
+          <h3>E-Learning App Design And How To Make It Better</h3>
+          <p>Kids and adults are becoming more and more techno-savvy, especially the kids who are used to all kinds of gadgets from a very small age.</p>
+          <div class="tags">
+            <span>#Design</span>
+          </div>
+        </div>
+
+        <!-- Article 2 -->
+        <div class="article">
+          <div class="small-card">
+            <img src="https://via.placeholder.com/100x80/444444/ffffff?text=SwiftUI" alt="SwiftUI">
+            <div>
+              <h4>How to Integrate Combine with SwiftUI to Make Better Apps</h4>
+              <p>Long-expected declarative UI became a reality, and it was truly an event of historic proportions in the world of iOS Development.</p>
+              <div class="tags">
+                <span>#Development</span>
+                <span>#Management</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Right Column -->
+      <div>
+
+        <!-- Featured Article -->
+        <div class="article featured">
+          <img src="https://via.placeholder.com/900x240/000000/ffffff?text=M1+MacBook" alt="M1 MacBook" class="article-img">
+          <h3>How Apple's M1 Chips Make macOS Development Much Less Costly</h3>
+          <p>The macOS market share is much smaller than the iOS one. There are many, many more iPhones out there, they dominate Apple's revenues so that's where most of their attention goes.</p>
+          <div class="tags">
+            <span>#Development</span>
+            <span>#Management</span>
+          </div>
+        </div>
+
+        <!-- Article 3 -->
+        <div class="article">
+          <div class="small-card">
+            <img src="https://via.placeholder.com/100x80/555555/ffffff?text=Car+Interior" alt="Car Interior">
+            <div>
+              <h4>How To Outsource Web Development And Web Design</h4>
+              <p>Everything is within reach of today's individual. All you need is a phone or a laptop. We are no longer restricted by our location and have the ability to expand our influence beyond spatial limitations.</p>
+              <div class="tags">
+                <span>#Design</span>
+                <span>#Development</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Article 4 -->
+        <div class="article">
+          <div class="small-card">
+            <img src="https://via.placeholder.com/100x80/666666/ffffff?text=Mouse" alt="Mouse">
+            <div>
+              <h4>What Makes Something Use It In Design</h4>
+              <p>What do you think about the phrase “beautiful design”? You like it, don’t care or does it make you wince?</p>
+              <div class="tags">
+                <span>#Development</span>
+                <span>#Management</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </main>
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Medical Data Explorer</title>
+
+  <!-- Tailwind (via CDN) -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    .ring {
+      position: relative;
+      width: 80px; height: 80px;
+    }
+    .ring canvas { position: absolute; top:0; left:0; }
+    .ring .value {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 1.1rem;
+    }
+    .mri-view {
+      position: relative;
+      overflow: hidden;
+      background:#111;
+      border:2px solid #22c55e;
+      border-radius:8px;
+    }
+    .crosshair {
+      position: absolute;
+      background:#22c55e;
+      pointer-events:none;
+    }
+    .crosshair.h { height:1px; width:100%; top:50%; transform:translateY(-50%); }
+    .crosshair.v { width:1px; height:100%; left:50%; transform:translateX(-50%); }
+    .tab-active { border-bottom:3px solid #22c55e; }
+  </style>
+</head>
+<body class="bg-black text-gray-200 min-h-screen flex flex-col">
+
+  <!-- Header -->
+  <header class="bg-gradient-to-b from-[#0a0a0a] to-[#111] p-6 text-center">
+    <h1 class="text-5xl font-bold">
+      Explore <span class="text-green-500">datasets</span> visually.
+    </h1>
+    <p class="mt-2 text-lg text-gray-400">
+      Visualise any kind of medical file, on one platform.
+    </p>
+  </header>
+
+  <main class="flex-1 flex flex-col lg:flex-row gap-4 p-4 max-w-screen-2xl mx-auto">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="lg:w-80 bg-[#111] rounded-lg p-4 border border-green-500/30 space-y-6">
+      <!-- User -->
+      <div class="flex items-center gap-3">
+        <img src="https://i.pravatar.cc/48?u=jeffrey" alt="User" class="rounded-full w-12 h-12">
+        <div>
+          <p class="font-semibold">Jeffrey Lawson</p>
+          <p class="text-sm text-gray-400">jeffrey@example.com</p>
+        </div>
+      </div>
+
+      <!-- Datasets -->
+      <section>
+        <h3 class="text-lg font-semibold mb-3 flex items-center gap-2">
+          <i class="fas fa-database text-green-500"></i> Datasets
+        </h3>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-center justify-between p-2 rounded hover:bg-green-900/30 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-ship text-green-500"></i>
+              <span>Titanic Classification</span>
+            </div>
+            <span class="text-green-400">+40%</span>
+          </li>
+          <li class="flex items-center justify-between p-2 rounded hover:bg-green-900/30 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-hospital text-green-500"></i>
+              <span>St. Mary Hospital Patients</span>
+            </div>
+            <span class="text-green-400">+35%</span>
+          </li>
+          <li class="flex items-center justify-between p-2 rounded hover:bg-green-900/30 cursor-pointer bg-green-900/30">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-heartbeat text-green-500"></i>
+              <span>Heart Disease</span>
+            </div>
+            <span class="text-green-400">+35%</span>
+          </li>
+          <li class="flex items-center justify-between p-2 rounded hover:bg-green-900/30 cursor-pointer">
+            <div class="flex items-center gap-2">
+              <i class="fas fa-brain text-green-500"></i>
+              <span>Brain Disease</span>
+            </div>
+            <span class="text-green-400">+70%</span>
+          </li>
+        </ul>
+      </section>
+    </aside>
+
+    <!-- CENTER AREA -->
+    <section class="flex-1 flex flex-col gap-4">
+
+      <!-- Projects Bar -->
+      <div class="bg-[#111] rounded-lg p-4 border border-green-500/30 flex items-center justify-between">
+        <h2 class="text-xl font-semibold flex items-center gap-2">
+          <i class="fas fa-folder-open text-green-500"></i> Projects
+        </h2>
+        <button class="bg-green-600 hover:bg-green-500 text-black font-medium px-4 py-1 rounded flex items-center gap-2">
+          <i class="fas fa-plus"></i> New Project
+        </button>
+      </div>
+
+      <!-- Progress Rings -->
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <!-- Ring 1 -->
+        <div class="flex flex-col items-center">
+          <div class="ring">
+            <canvas id="ring1"></canvas>
+            <div class="value text-green-400">40%</div>
+          </div>
+          <p class="mt-2 text-sm">Titanic</p>
+        </div>
+        <!-- Ring 2 -->
+        <div class="flex flex-col items-center">
+          <div class="ring">
+            <canvas id="ring2"></canvas>
+            <div class="value text-green-400">35%</div>
+          </div>
+          <p class="mt-2 text-sm">Heart Disease</p>
+        </div>
+        <!-- Ring 3 -->
+        <div class="flex flex-col items-center">
+          <div class="ring">
+            <canvas id="ring3"></canvas>
+            <div class="value text-green-400">35%</div>
+          </div>
+          <p class="mt-2 text-sm">Heart Disease</p>
+        </div>
+        <!-- Ring 4 -->
+        <div class="flex flex-col items-center">
+          <div class="ring">
+            <canvas id="ring4"></canvas>
+            <div class="value text-green-400">35%</div>
+          </div>
+          <p class="mt-2 text-sm">Heart Disease</p>
+        </div>
+      </div>
+
+      <!-- MRI Viewer -->
+      <div class="bg-[#111] rounded-lg p-4 border border-green-500/30 space-y-3">
+        <div class="flex items-center justify-between text-sm">
+          <span>File Name: 0533-Guy-0020-T1w.nii.gz</span>
+          <div class="flex gap-2">
+            <button class="px-2 py-1 bg-green-600/20 rounded"><i class="fas fa-eye"></i> 2/89</button>
+            <button class="px-2 py-1 bg-green-600/20 rounded"><i class="fas fa-th"></i></button>
+          </div>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- Axial -->
+          <div class="mri-view aspect-square">
+            <img src="https://images.unsplash.com/photo-1617791160505-6f00504e3519?auto=format&fit=crop&w=600&q=80"
+                 alt="Axial MRI" class="w-full h-full object-contain">
+            <div class="crosshair h"></div>
+            <div class="crosshair v"></div>
+          </div>
+          <!-- Multi-view -->
+          <div class="grid grid-cols-2 gap-2">
+            <div class="mri-view aspect-square">
+              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&q=80"
+                   alt="Sagittal" class="w-full h-full object-contain">
+              <div class="crosshair h"></div>
+              <div class="crosshair v"></div>
+            </div>
+            <div class="mri-view aspect-square">
+              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&q=80"
+                   alt="Coronal" class="w-full h-full object-contain">
+              <div class="crosshair h"></div>
+              <div class="crosshair v"></div>
+            </div>
+            <div class="mri-view aspect-square">
+              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&q=80"
+                   alt="3D" class="w-full h-full object-contain">
+              <div class="crosshair h"></div>
+              <div class="crosshair v"></div>
+            </div>
+            <div class="mri-view aspect-square">
+              <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?auto=format&fit=crop&w=300&q=80"
+                   alt="Overlay" class="w-full h-full object-contain">
+              <div class="crosshair h"></div>
+              <div class="crosshair v"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Controls -->
+        <div class="flex flex-wrap items-center gap-4 text-sm">
+          <div class="flex items-center gap-2">
+            <span>Zoom</span>
+            <input type="range" min="0" max="200" value="100" class="w-32 accent-green-500">
+            <span>100%</span>
+          </div>
+          <button class="px-3 py-1 bg-green-600/20 rounded"><i class="fas fa-compress-arrows-alt"></i> Reset</button>
+          <button class="px-3 py-1 bg-green-600/20 rounded"><i class="fas fa-crosshairs"></i> Go to Origin</button>
+          <button class="px-3 py-1 bg-green-600/20 rounded"><i class="fas fa-bullseye"></i> Go to Center</button>
+        </div>
+
+        <div class="text-center text-xs text-gray-500">
+          Current Position X: 0.0000 Y: 0.0000 Z: 0.0000
+        </div>
+      </div>
+
+      <!-- Tabs -->
+      <div class="flex border-b border-green-500/30">
+        <button class="flex-1 py-2 text-center tab-active">Images</button>
+        <button class="flex-1 py-2 text-center">Timeseries</button>
+        <button class="flex-1 py-2 text-center">Tabular</button>
+      </div>
+
+      <p class="text-center text-gray-400">
+        You can upload MRI files and visualise the entire data inside.
+      </p>
+    </section>
+
+    <!-- RIGHT SIDEBAR (File List) -->
+    <aside class="lg:w-80 bg-[#111] rounded-lg p-4 border border-green-500/30">
+      <h3 class="text-lg font-semibold mb-3 flex items-center justify-between">
+        <span>All Files</span>
+        <button class="text-green-400"><i class="fas fa-ellipsis-v"></i></button>
+      </h3>
+      <ul class="space-y-2 text-xs overflow-y-auto max-h-[calc(100vh-300px)]">
+        <!-- Sample files -->
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-T1w.nii.gz</span>
+        </li>
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-T2w.nii.gz</span>
+        </li>
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-FLAIR.nii.gz</span>
+        </li>
+        <!-- Repeat as needed -->
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-T1wCE.nii.gz</span>
+        </li>
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-DWI.nii.gz</span>
+        </li>
+        <li class="p-2 rounded hover:bg-green-900/30 cursor-pointer flex items-center gap-2">
+          <i class="fas fa-file-medical text-green-500"></i>
+          <span>0533-Guy-0020-ADC.nii.gz</span>
+        </li>
+      </ul>
+    </aside>
+  </main>
+
+  <script>
+    // ---------- Circular progress rings ----------
+    const rings = [
+      {id:'ring1', progress:40},
+      {id:'ring2', progress:35},
+      {id:'ring3', progress:35},
+      {id:'ring4', progress:35}
+    ];
+
+    rings.forEach(r => {
+      const ctx = document.getElementById(r.id).getContext('2d');
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          datasets: [{
+            data: [r.progress, 100-r.progress],
+            backgroundColor: ['#22c55e', '#1a1a1a'],
+            borderWidth: 0,
+            circumference: 280,
+            rotation: 230,
+            cutout: '78%'
+          }]
+        },
+        options: { responsive: true, maintainAspectRatio: false }
+      });
+    });
+
+    // ---------- Tab switching ----------
+    document.querySelectorAll('.tab-active').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tab-active').forEach(b => b.classList.remove('tab-active'));
+        btn.classList.add('tab-active');
+      });
+    });
+  </script>
+</body>
+</html>

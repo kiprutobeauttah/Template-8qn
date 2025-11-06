@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AG Drone Controller UI</title>
+
+<!-- Leaflet CSS -->
+<link rel="stylesheet"
+      href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin=""/>
+
+<style>
+  :root {
+    --bg: #1e1e1e;
+    --panel: #2a2a2a;
+    --accent: #ff6a00;
+    --text: #e0e0e0;
+    --text-dim: #aaaaaa;
+    --green: #00c853;
+    --red: #ff1744;
+  }
+  * { box-sizing: border-box; margin:0; padding:0; }
+  body { background:#111; color:var(--text); font-family:Arial,Helvetica,sans-serif; }
+  .container { max-width:1400px; margin:auto; padding:10px; }
+
+  /* Header */
+  header { display:flex; align-items:center; justify-content:space-between; background:var(--panel); padding:8px 12px; border-radius:6px; margin-bottom:10px; }
+  .logo { font-weight:bold; color:var(--accent); }
+  .nav button { background:none; border:none; color:var(--text-dim); margin:0 8px; cursor:pointer; }
+  .nav button.active { color:var(--accent); border-bottom:2px solid var(--accent); padding-bottom:4px; }
+  .stats { display:flex; gap:15px; font-size:0.9rem; }
+  .stats span { background:var(--bg); padding:4px 8px; border-radius:4px; }
+
+  /* Main layout */
+  .main { display:grid; grid-template-columns:1fr 300px; gap:12px; }
+  .video-panel { background:var(--panel); border-radius:6px; overflow:hidden; position:relative; }
+  .video { width:100%; height:auto; display:block; }
+  .overlay { position:absolute; top:0; left:0; right:0; bottom:0; pointer-events:none; }
+  .crosshair { position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:30px; height:30px; }
+  .crosshair::before, .crosshair::after { content:""; position:absolute; background:#fff; opacity:0.6; }
+  .crosshair::before { width:100%; height:1px; top:50%; }
+  .crosshair::after { width:1px; height:100%; left:50%; }
+
+  /* Controls */
+  .controls { display:grid; grid-template-columns:repeat(3,1fr); gap:8px; padding:10px; background:var(--bg); border-radius:6px; }
+  .ctrl { background:var(--panel); padding:8px; border-radius:4px; text-align:center; }
+  .ctrl label { display:block; font-size:0.85rem; margin-bottom:4px; color:var(--text-dim); }
+  .ctrl input[type=range] { width:100%; }
+  .ctrl .value { font-weight:bold; color:var(--accent); }
+
+  /* Right panel */
+  .right { display:flex; flex-direction:column; gap:12px; }
+  .module { background:var(--panel); padding:12px; border-radius:6px; }
+  .module h3 { margin-bottom:8px; color:var(--accent); }
+  .battery { display:flex; align-items:center; gap:8px; }
+  .battery-bar { flex:1; height:12px; background:#444; border-radius:6px; overflow:hidden; }
+  .battery-fill { height:100%; background:var(--green); width:50%; }
+  .slider { display:flex; align-items:center; gap:8px; }
+  .slider input[type=range] { flex:1; }
+  .slider .val { min-width:40px; text-align:right; color:var(--accent); }
+
+  /* Map styles */
+  #map { height: 120px; width: 100%; border-radius: 4px; }
+
+  /* Bottom bar */
+  .bottom { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:10px; }
+  .bottom .module { padding:10px; }
+
+  /* Misc */
+  .btn { background:var(--accent); color:#fff; border:none; padding:6px 12px; border-radius:4px; cursor:pointer; }
+  .btn:hover { opacity:0.9; }
+</style>
+</head>
+<body>
+<div class="container">
+
+  <!-- Header -->
+  <header>
+    <div class="logo">AG Drone</div>
+    <div class="nav">
+      <button class="active">Controller</button>
+      <button>Overview</button>
+      <button>Routes</button>
+      <button>All drones</button>
+      <button>Map view</button>
+    </div>
+    <div class="stats">
+      <span>243.4 km²</span>
+      <span>Rain 36 °C</span>
+      <span style="color:var(--green);">Ongoing 12 %</span>
+      <span>11:43 AM</span>
+    </div>
+  </header>
+
+  <!-- Main -->
+  <section class="main">
+
+    <!-- Video + Overlays -->
+    <div class="video-panel">
+      <img src="assets/aerial-map.webp" alt="Live view" class="video">
+      <div class="overlay">
+        <div style="position:absolute;top:12px;left:12px;background:rgba(0,0,0,0.5);padding:4px 8px;border-radius:4px;color:#ff6a00;">
+          HDR
+        </div>
+        <div style="position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.5);padding:4px 8px;border-radius:4px;">
+          <span style="color:#ff1744;">●</span> 02:11
+        </div>
+        <div style="position:absolute;bottom:12px;left:12px;background:rgba(0,0,0,0.5);padding:4px 8px;border-radius:4px;">
+          4K - 19.67 FPS
+        </div>
+        <div class="crosshair"></div>
+        <div style="position:absolute;bottom:80px;right:20px;background:rgba(0,0,0,0.5);padding:6px;border-radius:50%;width:50px;height:50px;display:flex;align-items:center;justify-content:center;color:#fff;">
+          33° NW
+        </div>
+      </div>
+    </div>
+
+    <!-- Right column -->
+    <aside class="right">
+
+      <!-- DHMR-3200 -->
+      <div class="module">
+        <h3>DHMR-3200</h3>
+        <p style="font-size:0.85rem;">We've increased the range of droplet size from 50 to 500µm.</p>
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <img src="assets/spray.png" alt="spray icon">
+        </div>
+
+        <!-- Battery -->
+        <div style="margin-top:12px;">
+          <div class="battery">
+            <span>Battery</span>
+            <div class="battery-bar"><div class="battery-fill"></div></div>
+            <span>50%</span>
+          </div>
+          <div style="font-size:0.8rem;color:var(--text-dim);">2663 / 4365 Mah | 27 °C</div>
+        </div>
+
+        <!-- Altitude -->
+        <div class="slider" style="margin-top:12px;">
+          <span>Altitude limited</span>
+          <input type="range" min="0" max="300" value="200" id="altitude-slider">
+          <span class="val">200 ML</span>
+        </div>
+
+        <!-- Resolution -->
+        <div class="slider" style="margin-top:8px;">
+          <span>Resolution px</span>
+          <input type="range" min="2" max="14" step="2" value="8">
+          <span class="val">8px</span>
+        </div>
+
+        <div style="margin-top:12px;display:flex;gap:8px;">
+          <button class="btn">ISO</button>
+          <button class="btn" style="background:#444;">HDR</button>
+          <button class="btn" style="background:#444;">DVR</button>
+        </div>
+      </div>
+
+      <!-- Mini map with Leaflet -->
+      <div class="module">
+        <h3>Map View</h3>
+        <div id="map"></div>
+      </div>
+    </aside>
+  </section>
+
+  <!-- Bottom controls -->
+  <section class="bottom">
+
+    <div class="module ctrl">
+      <label>Speed</label>
+      <input type="range" min="0" max="50" value="23">
+      <div class="value">23 km/h</div>
+    </div>
+
+    <div class="module ctrl">
+      <label>Height</label>
+      <input type="range" min="0" max="150" value="85" id="height-slider">
+      <div class="value">85 m</div>
+    </div>
+
+    <div class="module ctrl">
+      <label>Flight time</label>
+      <input type="range" min="0" max="360" value="214">
+      <div class="value">5h 34m</div>
+    </div>
+
+    <div class="module ctrl">
+      <label>Lens</label>
+      <input type="range" min="10" max="50" value="25">
+      <div class="value">25 mm</div>
+    </div>
+
+    <div class="module ctrl">
+      <label>ISO</label>
+      <input type="range" min="100" max="3200" value="600">
+      <div class="value">600</div>
+    </div>
+
+    <div class="module ctrl">
+      <label>Shutter</label>
+      <input type="range" min="1" max="1000" value="180">
+      <div class="value">180.0</div>
+    </div>
+
+    <div class="module" style="grid-column:1/-1;display:flex;gap:8px;justify-content:center;">
+      <button class="btn">Video</button>
+      <button class="btn" style="background:var(--accent);">Photo</button>
+      <span style="align-self:center;color:var(--text-dim);">Real time view</span>
+    </div>
+
+    <div class="module" style="grid-column:1/-1;display:flex;gap:12px;align-items:center;justify-content:center;">
+      <div>Display resolution</div>
+      <label><input type="radio" name="res" checked> 1280×720</label>
+      <label><input type="radio" name="res"> 1920×1080</label>
+      <label><input type="radio" name="res"> 854×480</label>
+      <label><input type="radio" name="res"> 640×360</label>
+    </div>
+
+  </section>
+</div>
+
+<!-- Leaflet JS (must be after CSS) -->
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+
+<script>
+  // Leaflet Map Initialization
+  var map = L.map('map').setView([52.0, -0.5], 15);  // Sample ag field center (adjust lat/lng as needed)
+
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>'
+  }).addTo(map);
+
+  // Drone marker (red icon, popup updates with height slider)
+  var droneIcon = L.divIcon({
+    className: 'drone-icon',
+    html: '🛩️',  // Emoji for drone (or use a custom icon URL)
+    iconSize: [20, 20],
+    iconAnchor: [10, 10]
+  });
+  var drone = L.marker([52.0, -0.5], { icon: droneIcon }).addTo(map);
+  drone.bindPopup("Drone Position").openPopup();
+
+  // Simple range input sync (with map popup update for height)
+  document.querySelectorAll('input[type=range]').forEach(slider => {
+    const output = slider.parentElement.querySelector('.value, .val') || 
+                   slider.closest('.slider').querySelector('.val');
+    if (!output) return;
+    const update = () => {
+      let val = slider.value;
+      // Special formatting
+      if (slider.parentElement.querySelector('label')?.textContent.includes('Flight')) {
+        const totalMin = slider.value;
+        const h = Math.floor(totalMin / 60);
+        const m = totalMin % 60;
+        val = `${h}h ${m.toString().padStart(2,'0')}m`;
+      } else if (slider.parentElement.querySelector('label')?.textContent.includes('Shutter')) {
+        val = `${val}.0`;
+      } else if (slider.parentElement.querySelector('label')?.textContent.includes('Altitude')) {
+        val = `${val} ML`;
+      } else if (slider.parentElement.querySelector('label')?.textContent.includes('Resolution')) {
+        val = `${val}px`;
+      } else if (slider.id === 'height-slider') {
+        // Update drone popup with height
+        drone.setPopupContent(`Drone Position: ${val} m altitude`);
+        if (map.getZoom() > 14) drone.openPopup();  // Auto-open if zoomed in
+      }
+      if (output) output.textContent = val;
+    };
+    slider.addEventListener('input', update);
+    update();
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>VacayVue - Agricultural Machinery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .stat-bar { transition: width 2s ease-out; }
+    .animate-stat { animation: grow 2s ease-out forwards; }
+    @keyframes grow {
+      from { width: 0%; }
+      to { width: var(--target-width); }
+    }
+    .bg-field { background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.6)), url('assets/crops.jpg') center/cover no-repeat; }
+  </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+  <!-- Hero Section -->
+  <section class="relative min-h-screen bg-field text-white flex items-center">
+    <div class="container mx-auto px-4 lg:px-8 grid lg:grid-cols-12 gap-8 items-center">
+      
+      <!-- Left Column -->
+      <div class="lg:col-span-5 space-y-6">
+        <div class="flex items-center space-x-2">
+          <img src="https://api.iconify.design/logos:vue.svg?color=%234fc08d" alt="VacayVue" class="w-8 h-8">
+          <span class="text-lg font-semibold">VacayVue®</span>
+        </div>
+
+        <h1 class="text-4xl lg:text-6xl font-bold leading-tight">
+          Revolutionizing<br>
+          <span class="text-green-400">Agricultural</span><br>
+          Machinery Production
+        </h1>
+
+        <div class="flex items-center space-x-4">
+          <div class="relative">
+            <img src="https://i.pravatar.cc/60?u=drone" alt="Drone" class="w-16 h-16 rounded-full border-4 border-green-400">
+            <div class="absolute -bottom-1 -right-1 bg-green-400 text-black text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center">12</div>
+          </div>
+          <div>
+            <p class="text-sm opacity-90">Boosting Agriculture Production through Mechanization</p>
+            <button class="mt-2 px-5 py-2 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition flex items-center space-x-1">
+              <span>View Details</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+        </div>
+
+        <!-- Stats -->
+        <div class="space-y-3 bg-white/10 backdrop-blur-sm p-5 rounded-2xl">
+          <div class="flex items-center justify-between">
+            <span class="text-3xl font-bold">85%</span>
+            <span class="text-sm opacity-80">Uninterrupted work</span>
+          </div>
+          <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+            <div class="stat-bar bg-green-400 h-full rounded-full" style="--target-width: 85%" onload="this.classList.add('animate-stat')"></div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold">67%</span>
+            <span class="text-sm opacity-80">Reducing wasted time</span>
+          </div>
+          <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+            <div class="stat-bar bg-green-400 h-full rounded-full" style="--target-width: 67%" onload="this.classList.add('animate-stat')"></div>
+          </div>
+
+          <div class="flex items-center justify-between">
+            <span class="text-2xl font-bold">5%</span>
+            <span class="text-sm opacity-80">Bugs</span>
+          </div>
+          <div class="w-full bg-white/20 rounded-full h-3 overflow-hidden">
+            <div class="stat-bar bg-green-400 h-full rounded-full" style="--target-width: 5%" onload="this.classList.add('animate-stat')"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Center: Drone Image -->
+      <div class="lg:col-span-4 flex justify-center relative">
+        <div class="relative">
+          <img src="assets/sprayer-drone.jpg" alt="Drone Sprayer" class="rounded-2xl shadow-2xl w-full max-w-md">
+          <div class="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent rounded-2xl"></div>
+          
+          <!-- Floating Icons -->
+          <div class="absolute top-10 left-10 animate-bounce">
+            <div class="bg-white/20 backdrop-blur p-2 rounded-full">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg>
+            </div>
+          </div>
+          <div class="absolute top-20 right-5 animate-bounce delay-300">
+            <div class="bg-white/20 backdrop-blur p-2 rounded-full">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5z"/></svg>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Navigation -->
+      <div class="lg:col-span-3">
+        <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-6 space-y-4">
+          <nav class="space-y-3">
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>Home</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>Services</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>How it works</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>Shop</span>
+              <div class="flex space-x-1">
+                <div class="w-5 h-5 bg-green-400 rounded-full"></div>
+                <div class="w-5 h-5 bg-yellow-400 rounded-full"></div>
+                <div class="w-5 h-5 bg-red-400 rounded-full"></div>
+              </div>
+            </a>
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>Blog</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+            <a href="#" class="flex items-center justify-between text-white/90 hover:text-white transition">
+              <span>Contacts</span>
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </a>
+          </nav>
+
+          <hr class="border-white/20">
+
+          <!-- Social Links -->
+          <div class="flex justify-between">
+            <a href="#" class="text-white/80 hover:text-white transition">Instagram</a>
+            <a href="#" class="text-white/80 hover:text-white transition">Facebook</a>
+            <a href="#" class="text-white/80 hover:text-white transition">Youtube</a>
+          </div>
+        </div>
+
+        <!-- Floating Drone Card -->
+        <div class="mt-8 bg-white/10 backdrop-blur-lg rounded-2xl p-4 flex items-center space-x-3">
+          <img src="https://images.unsplash.com/photo-1581093450021-4a7360e9a6b5?auto=format&fit=crop&w=200&q=80" alt="Machaon" class="w-12 h-12 rounded-lg">
+          <div>
+            <h3 class="font-bold text-lg">MACHAON 6X-25L</h3>
+            <div class="flex items-center space-x-2 text-sm">
+              <img src="https://i.pravatar.cc/30?u=declan" alt="Declan" class="w-5 h-5 rounded-full">
+              <span>Operator Declan Everhart</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Mobile Menu Button -->
+    <button id="mobileMenuBtn" class="lg:hidden fixed top-6 right-6 z-50 p-3 bg-white/20 backdrop-blur rounded-full">
+      <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </section>
+
+  <!-- Benefits Section -->
+  <section class="py-20 px-4 bg-white">
+    <div class="container mx-auto text-center">
+      <h2 class="text-5xl lg:text-7xl font-bold mb-8">
+        THE BENEFITS OF<br>
+        <span class="text-green-600">MECHANIZATION</span>
+      </h2>
+      <p class="text-gray-600 max-w-2xl mx-auto mb-12">
+        How mechanization can increase productivity, reduce labor costs, and improve crop yields.
+      </p>
+
+      <div class="flex flex-col lg:flex-row justify-center items-center gap-6">
+        <button class="px-8 py-3 border-2 border-black rounded-full font-semibold hover:bg-black hover:text-white transition">
+          MECHANIZATION
+        </button>
+        <button class="px-8 py-3 bg-black text-white rounded-full font-semibold hover:bg-gray-800 transition">
+          AI CASES
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- Mobile Navigation Drawer -->
+  <div id="mobileNav" class="fixed inset-0 bg-black/90 backdrop-blur z-40 hidden lg:hidden flex items-center justify-center">
+    <div class="bg-white/10 backdrop-blur-lg rounded-3xl p-8 w-11/12 max-w-sm">
+      <button id="closeMobileMenu" class="absolute top-4 right-4 text-white">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+      </button>
+      <nav class="space-y-6 text-white text-lg">
+        <a href="#" class="block">Home</a>
+        <a href="#" class="block">Services</a>
+        <a href="#" class="block">How it works</a>
+        <a href="#" class="block">Shop</a>
+        <a href="#" class="block">Blog</a>
+        <a href="#" class="block">Contacts</a>
+      </nav>
+      <div class="mt-8 pt-8 border-t border-white/20 flex justify-center space-x-6">
+        <a href="#" class="text-white">Instagram</a>
+        <a href="#" class="text-white">Facebook</a>
+        <a href="#" class="text-white">Youtube</a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Trigger stat animations on load
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.stat-bar').forEach(bar => {
+        bar.style.width = '0%';
+        setTimeout(() => {
+          bar.style.width = bar.style.getPropertyValue('--target-width');
+        }, 300);
+      });
+    });
+
+    // Mobile menu
+    const mobileBtn = document.getElementById('mobileMenuBtn');
+    const mobileNav = document.getElementById('mobileNav');
+    const closeBtn = document.getElementById('closeMobileMenu');
+
+    mobileBtn.addEventListener('click', () => mobileNav.classList.remove('hidden'));
+    closeBtn.addEventListener('click', () => mobileNav.classList.add('hidden'));
+    mobileNav.addEventListener('click', (e) => {
+      if (e.target === mobileNav) mobileNav.classList.add('hidden');
+    });
+  </script>
+</body>
+</html>

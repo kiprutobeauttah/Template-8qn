@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Pergamum University – Campus Map</title>
+
+  <!-- Leaflet -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <!-- Font Awesome -->
+  <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    /* ==== Global ==== */
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{font-family:'Segoe UI',Arial,sans-serif;background:#f0f4f5;color:#fff;}
+    a{color:inherit;text-decoration:none;}
+
+    /* ==== Header ==== */
+    header{
+      background:#111;
+      padding:1rem 2rem;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      position:relative;
+      z-index:10;
+    }
+    .logo{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
+      font-weight:600;
+      font-size:1.2rem;
+    }
+    .logo i{color:#f90;}
+    nav{
+      display:flex;
+      gap:2rem;
+    }
+    nav a{
+      font-weight:500;
+      transition:color .2s;
+    }
+    nav a:hover{color:#f90;}
+    .icons i{margin-left:1rem;cursor:pointer;}
+
+    /* ==== Main Container ==== */
+    .container{
+      position:relative;
+      height:calc(100vh - 70px);
+      overflow:hidden;
+    }
+    #map{
+      width:100%;
+      height:100%;
+      filter:brightness(0.65) contrast(1.2);
+    }
+
+    /* ==== Sidebar ==== */
+    .sidebar{
+      position:absolute;
+      left:0;top:0;bottom:0;
+      width:260px;
+      background:rgba(0,0,0,0.85);
+      padding:1.5rem;
+      overflow-y:auto;
+      z-index:5;
+    }
+    .sidebar h2{
+      font-size:1.1rem;
+      margin-bottom:.5rem;
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+    }
+    .sidebar h2 span{
+      background:#f90;
+      color:#000;
+      font-size:.8rem;
+      padding:2px 6px;
+      border-radius:4px;
+    }
+    .sidebar ul{
+      list-style:none;
+      margin-top:1rem;
+    }
+    .sidebar li{
+      padding:.6rem 0;
+      cursor:pointer;
+      transition:background .2s;
+    }
+    .sidebar li:hover,
+    .sidebar li.active{
+      background:rgba(255,153,0,0.2);
+      border-radius:4px;
+      padding-left:.5rem;
+    }
+    .sidebar li i{margin-right:.5rem;color:#f90;}
+
+    /* ==== Bottom Panel ==== */
+    .bottom-panel{
+      position:absolute;
+      left:50%;bottom:1rem;
+      transform:translateX(-50%);
+      background:rgba(0,0,0,0.85);
+      border-radius:8px;
+      padding:1rem;
+      display:flex;
+      align-items:center;
+      gap:1rem;
+      z-index:5;
+      max-width:90%;
+    }
+    .weather{
+      display:flex;
+      align-items:center;
+      gap:.4rem;
+      font-size:1.1rem;
+    }
+    .weather i{color:#f90;}
+    .cafes{
+      display:flex;
+      gap:.8rem;
+      overflow-x:auto;
+      padding-bottom:.4rem;
+    }
+    .cafe-card{
+      background:rgba(255,255,255,0.1);
+      border-radius:6px;
+      padding:.6rem;
+      min-width:180px;
+      display:flex;
+      flex-direction:column;
+      gap:.4rem;
+      transition:transform .2s;
+    }
+    .cafe-card:hover{transform:translateY(-4px);}
+    .cafe-card img{
+      width:100%;
+      height:80px;
+      object-fit:cover;
+      border-radius:4px;
+    }
+    .cafe-card h4{font-size:.95rem;}
+    .cafe-card p{font-size:.8rem;color:#ccc;}
+    .cafe-card button{
+      background:#f90;
+      color:#000;
+      border:none;
+      padding:.4rem .8rem;
+      border-radius:4px;
+      cursor:pointer;
+      font-weight:600;
+      margin-top:.4rem;
+    }
+
+    /* ==== Route Overlay (simulated) ==== */
+    .route{
+      stroke:#f90;
+      stroke-width:4;
+      fill:none;
+      stroke-dasharray:8,8;
+      animation:dash 2s linear infinite;
+    }
+    @keyframes dash{
+      to{stroke-dashoffset:-16;}
+    }
+
+    /* ==== Responsive ==== */
+    @media(max-width:960px){
+      .sidebar{width:220px;}
+      .bottom-panel{flex-direction:column;gap:.5rem;}
+    }
+    @media(max-width:600px){
+      header{flex-direction:column;gap:.5rem;}
+      nav{gap:1rem;}
+      .sidebar{width:100%;height:auto;position:relative;padding:1rem;}
+      .container{height:auto;}
+      #map{height:400px;}
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">
+    <i class="fas fa-shield-alt"></i>
+    <span>Pergamum University</span>
+  </div>
+  <nav>
+    <a href="#">About</a>
+    <a href="#">Admissions & Aid</a>
+    <a href="#">On Campus</a>
+    <a href="#">Schools</a>
+  </nav>
+  <div class="icons">
+    <i class="fas fa-search"></i>
+    <i class="fas fa-bars"></i>
+  </div>
+</header>
+
+<div class="container">
+  <div id="map"></div>
+
+  <!-- Sidebar -->
+  <aside class="sidebar">
+    <h2><i class="fas fa-coffee"></i> Cafés <span>3</span></h2>
+    <ul>
+      <li class="active"><i class="fas fa-circle"></i> Pergamum Café Shop</li>
+      <li><i class="fas fa-circle"></i> Bistro Bouncers Coffee</li>
+      <li><i class="fas fa-circle"></i> Salina’s Dark Coffee</li>
+    </ul>
+
+    <h2 style="margin-top:2rem;"><i class="fas fa-info-circle"></i> Quick Links</h2>
+    <ul>
+      <li><i class="fas fa-exclamation-triangle"></i> Emergencies</li>
+      <li><i class="fas fa-bus"></i> Bus Stops</li>
+      <li><i class="fas fa-car"></i> Parking</li>
+      <li><i class="fas fa-utensils"></i> Restaurants</li>
+      <li><i class="fas fa-dumbbell"></i> Sport Centers</li>
+    </ul>
+  </aside>
+
+  <!-- Bottom Panel -->
+  <section class="bottom-panel">
+    <div class="weather">
+      <i class="fas fa-sun"></i>
+      <span>28°</span>
+      <small>11 km/h</small>
+      <small>Mon, 25 Aug 2025 02:21 pm</small>
+    </div>
+
+    <div class="cafes">
+      <div class="cafe-card">
+        <img src="https://images.unsplash.com/photo-1517248135467-2c7ed6ba9c2b?auto=format&fit=crop&w=300&q=80" alt=""/>
+        <h4>Pergamum Café Shop</h4>
+        <p>Vila Portuaria / Pergamum</p>
+        <button>GET MORE INFORMATION</button>
+      </div>
+
+      <div class="cafe-card">
+        <img src="https://images.unsplash.com/photo-1504754524776-5ed2b6f8b5df?auto=format&fit=crop&w=300&q=80" alt=""/>
+        <h4>Bistro Bouncers Coffee</h4>
+        <p>Alto Alegre / Pergamum</p>
+        <button>GET MORE INFORMATION</button>
+      </div>
+
+      <div class="cafe-card">
+        <img src="https://images.unsplash.com/photo-1554110395-3e349b5c436a?auto=format&fit=crop&w=300&q=80" alt=""/>
+        <h4>Salina’s Dark Coffee</h4>
+        <p>Rua das Flores, 123</p>
+        <button>GET MORE INFORMATION</button>
+      </div>
+    </div>
+  </section>
+</div>
+
+<script>
+  // ==== Leaflet Map ====
+  const map = L.map('map').setView([-12.97, -38.50], 15);
+
+  L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+    attribution: '&copy; OpenStreetMap contributors &amp; CartoDB',
+    maxZoom: 19,
+  }).addTo(map);
+
+  // ==== Sample café markers ====
+  const cafes = [
+    {name:'Pergamum Café Shop',   lat:-12.965, lng:-38.505, img:'https://images.unsplash.com/photo-1517248135467-2c7ed6ba9c2b?auto=format&fit=crop&w=300&q=80'},
+    {name:'Bistro Bouncers Coffee',lat:-12.970, lng:-38.495, img:'https://images.unsplash.com/photo-1504754524776-5ed2b6f8b5df?auto=format&fit=crop&w=300&q=80'},
+    {name:'Salina’s Dark Coffee', lat:-12.975, lng:-38.510, img:'https://images.unsplash.com/photo-1554110395-3e349b5c436a?auto=format&fit=crop&w=300&q=80'}
+  ];
+
+  const markers = [];
+  cafes.forEach(c => {
+    const m = L.circleMarker([c.lat, c.lng], {
+      radius: 8,
+      fillColor: '#f90',
+      color: '#000',
+      weight: 2,
+      opacity: 1,
+      fillOpacity: 0.8
+    }).addTo(map)
+      .bindPopup(`<b>${c.name}</b><br><img src="${c.img}" style="width:100%;margin-top:5px;border-radius:4px;">`);
+    markers.push(m);
+  });
+
+  // ==== Simulated orange route (polyline) ====
+  const routeCoords = [
+    [-12.965, -38.505],
+    [-12.968, -38.500],
+    [-12.970, -38.495],
+    [-12.975, -38.510]
+  ];
+  const route = L.polyline(routeCoords, {
+    color: '#f90',
+    weight: 4,
+    opacity: 1,
+    className: 'route'
+  }).addTo(map);
+
+  // Fit map to route
+  map.fitBounds(route.getBounds().pad(0.1));
+
+  // ==== Sidebar active state sync ====
+  document.querySelectorAll('.sidebar li').forEach((li, i) => {
+    li.addEventListener('click', () => {
+      document.querySelectorAll('.sidebar li').forEach(l => l.classList.remove('active'));
+      li.classList.add('active');
+      map.setView([cafes[i].lat, cafes[i].lng], 17);
+      markers[i].openPopup();
+    });
+  });
+
+  // ==== Weather icon (just a placeholder) ====
+  // You can replace with real API later.
+</script>
+</body>
+</html>
