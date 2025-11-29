@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lunara • Timeless Elegance</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --cream: rgb(248, 244, 236);
+            --pink-light: rgb(255, 143, 183);
+            --pink: rgb(232, 60, 145);
+            --purple: rgb(67, 51, 76);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--cream);
+            color: var(--purple);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 { font-family: 'Playfair Display', serif; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            padding: 20px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(248, 244, 236, 0.95);
+            backdrop-filter: blur(10px);
+            z-index: 1000;
+            transition: all 0.3s;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--pink);
+        }
+
+        .nav-links a {
+            margin-left: 40px;
+            text-decoration: none;
+            color: var(--purple);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover { color: var(--pink); }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 8%;
+            background: linear-gradient(135deg, var(--cream) 0%, #fdf8f3 100%);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            width: 600px;
+            height: 600px;
+            border-radius: 50%;
+            background: rgba(255, 143, 183, 0.15);
+            top: -200px;
+            right: -200px;
+        }
+
+        .hero-content {
+            max-width: 600px;
+            z-index: 2;
+        }
+
+        .hero h1 {
+            font-size: 5.5rem;
+            line-height: 1.1;
+            margin-bottom: 20px;
+            color: var(--purple);
+        }
+
+        .hero p {
+            font-size: 1.3rem;
+            margin-bottom: 40px;
+            opacity: 0.9;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--pink), var(--pink-light));
+            color: white;
+            padding: 18px 48px;
+            border: none;
+            border-radius: 50px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.4s;
+            box-shadow: 0 10px 30px rgba(232, 60, 145, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(232, 60, 145, 0.4);
+        }
+
+        .hero-image {
+            position: relative;
+            z-index: 2;
+        }
+
+        .hero-image img {
+            max-width: 550px;
+            border-radius: 20px;
+            box-shadow: 0 30px 60px rgba(67, 51, 76, 0.15);
+        }
+
+        /* Featured Products */
+        .featured {
+            padding: 120px 8%;
+            text-align: center;
+            background: white;
+        }
+
+        .section-title {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            color: var(--purple);
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            opacity: 0.8;
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 40px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(67, 51, 76, 0.08);
+            transition: all 0.4s;
+        }
+
+        .product-card:hover {
+            transform: translateY(-15px);
+            box-shadow: 0 30px 60px rgba(67, 51, 76, 0.15);
+        }
+
+        .product-img {
+            height: 380px;
+            overflow: hidden;
+        }
+
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.5s;
+        }
+
+        .product-card:hover .product-img img {
+            transform: scale(1.1);
+        }
+
+        .product-info {
+            padding: 30px;
+            text-align: left;
+        }
+
+        .product-info h3 {
+            font-size: 1.6rem;
+            margin-bottom: 10px;
+        }
+
+        .price {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--pink);
+            margin: 15px 0;
+        }
+
+        .btn-secondary {
+            background: transparent;
+            border: 2px solid var(--pink);
+            color: var(--pink);
+            padding: 12px 30px;
+            border-radius: 50px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .btn-secondary:hover {
+            background: var(--pink);
+            color: white;
+        }
+
+        /* CTA Section */
+        .cta {
+            padding: 120px 8%;
+            text-align: center;
+            background: linear-gradient(135deg, var(--pink-light), var(--pink));
+            color: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cta h2 {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .cta p {
+            font-size: 1.3rem;
+            max-width: 700px;
+            margin: 0 auto 40px;
+            opacity: 0.95;
+        }
+
+        footer {
+            padding: 80px 8% 40px;
+            background: var(--purple);
+            color: rgba(255,255,255,0.8);
+            text-align: center;
+        }
+
+        footer .logo {
+            color: white;
+            margin-bottom: 20px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">Lunara</div>
+        <div class="nav-links">
+            <a href="#">Shop</a>
+            <a href="#">New Arrivals</a>
+            <a href="#">Sale</a>
+            <a href="#">Contact</a>
+        </div>
+    </nav>
+
+    <section class="hero">
+        <div class="hero-content">
+            <h1>Discover Timeless Elegance</h1>
+            <p>Crafted with passion, designed for the modern muse. Explore our exclusive spring-summer collection.</p>
+            <button class="btn-primary">Shop Collection</button>
+        </div>
+        <div class="hero-image">
+            <img src="https://images.unsplash.com/photo-1445205170230-053b83016050?w=800&q=80" alt="Featured Dress">
+        </div>
+    </section>
+
+    <section class="featured">
+        <h2 class="section-title">Featured Pieces</h2>
+        <p class="section-subtitle">Handpicked just for you — limited editions and bestsellers</p>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600" alt="Silk Blouse">
+                </div>
+                <div class="product-info">
+                    <h3>Rose Silk Blouse</h3>
+                    <div class="price">$189</div>
+                    <button class="btn-secondary">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1585487000160-6ebcfceb0d03?w=600" alt="Midi Dress">
+                </div>
+                <div class="product-info">
+                    <h3>Amélie Midi Dress</h3>
+                    <div class="price">$298</div>
+                    <button class="btn-secondary">Add to Cart</button>
+                </div>
+            </div>
+
+            <div class="product-card">
+                <div class="product-img">
+                    <img src="https://images.unsplash.com/photo-1566207274740-4ca9c9473e28?w=600" alt="Cashmere Coat">
+                </div>
+                <div class="product-info">
+                    <h3>Cashmere Dream Coat</h3>
+                    <div class="price">$649</div>
+                    <button class="btn-secondary">Add to Cart</button>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="cta">
+        <h2>Join the Waitlist</h2>
+        <p>Get early access to our most exclusive drops and enjoy 15% off your first order.</p>
+        <button class="btn-primary">Sign Up Now</button>
+    </section>
+
+    <footer>
+        <div class="logo">Lunara</div>
+        <p>© 2025 Lunara. Handcrafted with love.</p>
+    </footer>
+
+</body>
+</html>
