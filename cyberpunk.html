@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyberpunk - Neon Future Template</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Orbitron', monospace;
+            background: #0a0a0a;
+            color: #00ff41;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        .cyber-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 65, 0.1) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 65, 0.1) 1px, transparent 1px);
+            background-size: 50px 50px;
+            z-index: -2;
+            animation: grid-pulse 4s ease-in-out infinite;
+        }
+        
+        @keyframes grid-pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+        
+        .cyber-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 20%, rgba(255, 0, 150, 0.2) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(0, 255, 255, 0.2) 0%, transparent 50%);
+            z-index: -1;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .cyber-title {
+            font-size: 4rem;
+            font-weight: 900;
+            color: #00ff41;
+            text-shadow: 
+                0 0 10px #00ff41,
+                0 0 20px #00ff41,
+                0 0 40px #00ff41;
+            margin-bottom: 20px;
+            animation: neon-flicker 2s ease-in-out infinite alternate;
+            letter-spacing: 3px;
+        }
+        
+        @keyframes neon-flicker {
+            0%, 100% { 
+                text-shadow: 
+                    0 0 10px #00ff41,
+                    0 0 20px #00ff41,
+                    0 0 40px #00ff41;
+            }
+            50% { 
+                text-shadow: 
+                    0 0 5px #00ff41,
+                    0 0 10px #00ff41,
+                    0 0 20px #00ff41,
+                    0 0 40px #ff0080;
+            }
+        }
+        
+        .cyber-subtitle {
+            font-size: 1.2rem;
+            color: #ff0080;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ff0080;
+        }
+        
+        .cyber-nav {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .cyber-link {
+            background: linear-gradient(45deg, rgba(0, 255, 65, 0.1), rgba(255, 0, 128, 0.1));
+            color: #00ffff;
+            padding: 15px 30px;
+            text-decoration: none;
+            border: 2px solid #00ffff;
+            border-radius: 0;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .cyber-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 255, 255, 0.2), transparent);
+            transition: left 0.5s ease;
+        }
+        
+        .cyber-link:hover::before {
+            left: 100%;
+        }
+        
+        .cyber-link:hover {
+            box-shadow: 
+                0 0 20px #00ffff,
+                inset 0 0 20px rgba(0, 255, 255, 0.1);
+            transform: scale(1.05);
+        }
+        
+        .cyber-grid-cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-top: 50px;
+        }
+        
+        .cyber-card {
+            background: linear-gradient(135deg, rgba(0, 0, 0, 0.8), rgba(20, 20, 20, 0.9));
+            border: 2px solid #00ff41;
+            padding: 30px;
+            position: relative;
+            transition: all 0.3s ease;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+        }
+        
+        .cyber-card::before {
+            content: '';
+            position: absolute;
+            top: -2px;
+            left: -2px;
+            right: -2px;
+            bottom: -2px;
+            background: linear-gradient(45deg, #00ff41, #ff0080, #00ffff, #00ff41);
+            z-index: -1;
+            clip-path: polygon(0 0, calc(100% - 20px) 0, 100% 20px, 100% 100%, 20px 100%, 0 calc(100% - 20px));
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        
+        .cyber-card:hover::before {
+            opacity: 1;
+        }
+        
+        .cyber-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 
+                0 20px 40px rgba(0, 255, 65, 0.2),
+                0 0 30px rgba(255, 0, 128, 0.3);
+        }
+        
+        .cyber-card h3 {
+            color: #00ffff;
+            font-size: 1.4rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            text-shadow: 0 0 10px #00ffff;
+        }
+        
+        .cyber-card p {
+            color: #cccccc;
+            line-height: 1.6;
+            font-weight: 400;
+        }
+        
+        .glitch-text {
+            position: relative;
+            display: inline-block;
+        }
+        
+        .glitch-text::before,
+        .glitch-text::after {
+            content: attr(data-text);
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+        
+        .glitch-text::before {
+            animation: glitch-1 0.5s infinite;
+            color: #ff0080;
+            z-index: -1;
+        }
+        
+        .glitch-text::after {
+            animation: glitch-2 0.5s infinite;
+            color: #00ffff;
+            z-index: -2;
+        }
+        
+        @keyframes glitch-1 {
+            0%, 14%, 15%, 49%, 50%, 99%, 100% { transform: translate(0); }
+            15%, 49% { transform: translate(-2px, -2px); }
+        }
+        
+        @keyframes glitch-2 {
+            0%, 20%, 21%, 62%, 63%, 99%, 100% { transform: translate(0); }
+            21%, 62% { transform: translate(2px, 2px); }
+        }
+        
+        .floating-code {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .code-line {
+            position: absolute;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            color: #00ff41;
+            opacity: 0.3;
+            animation: float-code 10s linear infinite;
+        }
+        
+        @keyframes float-code {
+            0% { 
+                transform: translateY(100vh);
+                opacity: 0;
+            }
+            10% { opacity: 0.3; }
+            90% { opacity: 0.3; }
+            100% { 
+                transform: translateY(-100px);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="cyber-grid"></div>
+    <div class="cyber-bg"></div>
+    <div class="floating-code" id="floating-code"></div>
+    
+    <div class="container">
+        <header class="header">
+            <h1 class="cyber-title glitch-text" data-text="CYBERPUNK">CYBERPUNK</h1>
+            <p class="cyber-subtitle">Welcome to the Neon Future</p>
+        </header>
+        
+        <nav class="cyber-nav">
+            <a href="#" class="cyber-link">NEURAL NET</a>
+            <a href="#" class="cyber-link">DATA STREAM</a>
+            <a href="#" class="cyber-link">CYBER SPACE</a>
+            <a href="#" class="cyber-link">MATRIX</a>
+        </nav>
+        
+        <div class="cyber-grid-cards">
+            <div class="cyber-card">
+                <h3>🤖 AI SYSTEMS</h3>
+                <p>Advanced artificial intelligence networks that process data at quantum speeds, revolutionizing the digital landscape of tomorrow.</p>
+            </div>
+            
+            <div class="cyber-card">
+                <h3>🔮 NEURAL INTERFACE</h3>
+                <p>Direct brain-computer connections that blur the line between human consciousness and digital reality in the cyber realm.</p>
+            </div>
+            
+            <div class="cyber-card">
+                <h3>⚡ QUANTUM CORE</h3>
+                <p>Quantum computing cores that manipulate reality itself, processing infinite possibilities in parallel dimensions.</p>
+            </div>
+            
+            <div class="cyber-card">
+                <h3>🌐 CYBER MATRIX</h3>
+                <p>The interconnected web of digital consciousness where data flows like rivers of light through neon-lit pathways.</p>
+            </div>
+            
+            <div class="cyber-card">
+                <h3>🔥 NEON PROTOCOLS</h3>
+                <p>Encrypted communication channels that pulse with electric energy, securing data transmission across the digital void.</p>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        const codeSnippets = [
+            'if (reality == false) { hack(); }',
+            'while(true) { matrix.run(); }',
+            'neural.connect(brain, cyber);',
+            'quantum.process(infinity);',
+            'neon.glow(0xFF00FF);',
+            'cyber.punk.activate();',
+            'data.stream.flow();',
+            'ai.evolve(consciousness);'
+        ];
+        
+        function createCodeLine() {
+            const codeLine = document.createElement('div');
+            codeLine.className = 'code-line';
+            codeLine.textContent = codeSnippets[Math.floor(Math.random() * codeSnippets.length)];
+            codeLine.style.left = Math.random() * 100 + '%';
+            codeLine.style.animationDelay = Math.random() * 2 + 's';
+            codeLine.style.animationDuration = (Math.random() * 5 + 8) + 's';
+            document.getElementById('floating-code').appendChild(codeLine);
+            
+            setTimeout(() => {
+                codeLine.remove();
+            }, 12000);
+        }
+        
+        setInterval(createCodeLine, 1000);
+    </script>
+</body>
+</html>

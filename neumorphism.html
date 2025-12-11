@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neumorphism - Soft UI Template</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: #e0e5ec;
+            min-height: 100vh;
+            color: #4a5568;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+        
+        .neuro-header {
+            background: #e0e5ec;
+            border-radius: 30px;
+            padding: 50px 40px;
+            box-shadow: 
+                20px 20px 60px #bebebe,
+                -20px -20px 60px #ffffff;
+            margin-bottom: 40px;
+        }
+        
+        .neuro-header h1 {
+            font-size: 3.5rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 15px;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+        }
+        
+        .neuro-header p {
+            font-size: 1.2rem;
+            color: #718096;
+            font-weight: 400;
+        }
+        
+        .neuro-nav {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin: 40px 0;
+            flex-wrap: wrap;
+        }
+        
+        .neuro-btn {
+            background: #e0e5ec;
+            color: #4a5568;
+            padding: 15px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 
+                8px 8px 16px #bebebe,
+                -8px -8px 16px #ffffff;
+        }
+        
+        .neuro-btn:hover {
+            box-shadow: 
+                inset 8px 8px 16px #bebebe,
+                inset -8px -8px 16px #ffffff;
+            transform: scale(0.98);
+        }
+        
+        .neuro-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+        
+        .neuro-card {
+            background: #e0e5ec;
+            border-radius: 25px;
+            padding: 40px;
+            box-shadow: 
+                15px 15px 30px #bebebe,
+                -15px -15px 30px #ffffff;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        
+        .neuro-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 
+                20px 20px 40px #bebebe,
+                -20px -20px 40px #ffffff;
+        }
+        
+        .neuro-card .icon {
+            width: 60px;
+            height: 60px;
+            background: #e0e5ec;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 20px;
+            box-shadow: 
+                inset 8px 8px 16px #bebebe,
+                inset -8px -8px 16px #ffffff;
+        }
+        
+        .neuro-card h3 {
+            color: #2d3748;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .neuro-card p {
+            color: #718096;
+            line-height: 1.7;
+            font-weight: 400;
+        }
+        
+        .neuro-toggle {
+            width: 80px;
+            height: 40px;
+            background: #e0e5ec;
+            border-radius: 20px;
+            position: relative;
+            cursor: pointer;
+            box-shadow: 
+                inset 8px 8px 16px #bebebe,
+                inset -8px -8px 16px #ffffff;
+            margin: 20px auto;
+            transition: all 0.3s ease;
+        }
+        
+        .neuro-toggle::after {
+            content: '';
+            position: absolute;
+            width: 32px;
+            height: 32px;
+            background: #e0e5ec;
+            border-radius: 50%;
+            top: 4px;
+            left: 4px;
+            transition: all 0.3s ease;
+            box-shadow: 
+                4px 4px 8px #bebebe,
+                -4px -4px 8px #ffffff;
+        }
+        
+        .neuro-toggle.active::after {
+            left: 44px;
+        }
+        
+        .neuro-input {
+            width: 100%;
+            padding: 15px 20px;
+            background: #e0e5ec;
+            border: none;
+            border-radius: 15px;
+            font-size: 1rem;
+            color: #4a5568;
+            box-shadow: 
+                inset 8px 8px 16px #bebebe,
+                inset -8px -8px 16px #ffffff;
+            margin: 10px 0;
+            transition: all 0.3s ease;
+        }
+        
+        .neuro-input:focus {
+            outline: none;
+            box-shadow: 
+                inset 12px 12px 24px #bebebe,
+                inset -12px -12px 24px #ffffff;
+        }
+        
+        .neuro-input::placeholder {
+            color: #a0aec0;
+        }
+        
+        .floating-elements {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .soft-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: #e0e5ec;
+            box-shadow: 
+                10px 10px 20px #bebebe,
+                -10px -10px 20px #ffffff;
+            animation: float-soft 15s ease-in-out infinite;
+        }
+        
+        @keyframes float-soft {
+            0%, 100% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-elements">
+        <div class="soft-circle" style="width: 100px; height: 100px; top: 10%; left: 5%; animation-delay: 0s;"></div>
+        <div class="soft-circle" style="width: 60px; height: 60px; top: 70%; right: 10%; animation-delay: -5s;"></div>
+        <div class="soft-circle" style="width: 80px; height: 80px; bottom: 20%; left: 15%; animation-delay: -10s;"></div>
+    </div>
+    
+    <div class="container">
+        <header class="header">
+            <div class="neuro-header">
+                <h1>Neumorphism</h1>
+                <p>Soft UI design with subtle depth and shadows</p>
+            </div>
+        </header>
+        
+        <nav class="neuro-nav">
+            <a href="#" class="neuro-btn">🏠 Home</a>
+            <a href="#" class="neuro-btn">📊 Dashboard</a>
+            <a href="#" class="neuro-btn">⚙️ Settings</a>
+            <a href="#" class="neuro-btn">👤 Profile</a>
+        </nav>
+        
+        <div class="neuro-grid">
+            <div class="neuro-card">
+                <div class="icon">🎨</div>
+                <h3>Soft Shadows</h3>
+                <p>Experience the gentle beauty of soft shadows that create depth without harsh contrasts, mimicking real-world lighting.</p>
+                <input type="text" class="neuro-input" placeholder="Enter your thoughts...">
+            </div>
+            
+            <div class="neuro-card">
+                <div class="icon">💡</div>
+                <h3>Subtle Depth</h3>
+                <p>Elements appear to emerge from or sink into the background, creating an intuitive and tactile user interface experience.</p>
+                <div class="neuro-toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+            
+            <div class="neuro-card">
+                <div class="icon">🌟</div>
+                <h3>Minimalist Beauty</h3>
+                <p>Clean, minimal design philosophy that focuses on essential elements while maintaining visual interest through subtle effects.</p>
+                <input type="email" class="neuro-input" placeholder="your@email.com">
+            </div>
+            
+            <div class="neuro-card">
+                <div class="icon">🔧</div>
+                <h3>Interactive Elements</h3>
+                <p>Buttons and controls that respond naturally to user interaction, providing satisfying tactile feedback through visual cues.</p>
+                <div class="neuro-toggle" onclick="this.classList.toggle('active')"></div>
+            </div>
+            
+            <div class="neuro-card">
+                <div class="icon">📱</div>
+                <h3>Modern Interface</h3>
+                <p>Contemporary design approach that bridges the gap between flat design and skeuomorphism with elegant simplicity.</p>
+                <input type="text" class="neuro-input" placeholder="Search...">
+            </div>
+        </div>
+    </div>
+</body>
+</html>
